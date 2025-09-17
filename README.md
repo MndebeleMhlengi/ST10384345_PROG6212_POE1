@@ -49,3 +49,41 @@ Prerequisites
 SQL Server (LocalDB or full instance)
 Visual Studio 2022 or VS Code
 IIS Express or Kestrel server
+
+Project Structure
+CMCS/
+├── Controllers/
+│   ├── HomeController.cs              # Main dashboard and navigation
+│   ├── LecturerController.cs          # Lecturer-specific actions
+│   ├── ProgrammeCoordinatorController.cs  # Claim review functionality
+│   ├── HRController.cs                # Payment processing
+│   ├── ClaimsController.cs            # Claim CRUD operations
+│   ├── DocumentsController.cs         # Document management
+│   └── AccountController.cs           # Authentication
+├── Models/
+│   ├── ViewModels/
+│   │   ├── ClaimViewModel.cs          # Claim display data
+│   │   ├── ClaimReviewViewModel.cs    # Claims awaiting review
+│   │   ├── PaymentReadyClaimViewModel.cs  # Approved claims for payment
+│   │   └── DocumentViewModel.cs       # Document display data
+│   └── Entities/
+│       ├── User.cs                    # User entity
+│       ├── Claim.cs                   # Claim entity
+│       └── Document.cs                # Document entity
+├── Views/
+│   ├── Home/
+│   │   └── Index.cshtml               # Main landing page
+│   ├── Lecturer/
+│   │   └── Dashboard.cshtml           # Lecturer dashboard
+│   ├── ProgrammeCoordinator/
+│   │   └── Dashboard.cshtml           # Coordinator review dashboard
+│   ├── HR/
+│   │   └── Dashboard.cshtml           # HR payment dashboard
+│   ├── Claims/
+│   │   └── Index.cshtml               # Claims listing
+│   ├── Documents/
+│   │   └── Index.cshtml               # Document management
+│   └── Shared/
+│       └── _Layout.cshtml             # Main layout template
+└── wwwroot/
+    └── uploads/                       # Document storage directory
