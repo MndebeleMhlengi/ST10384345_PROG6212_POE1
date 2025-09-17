@@ -1,0 +1,136 @@
+﻿@model IEnumerable<CMCS.Models.Claim>
+@{
+    ViewData["Title"] = "HR Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">HR Dashboard</h1>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Ready for Payment</h6>
+                        <h3 class="mb-0">@ViewBag.TotalForPayment</h3>
+                    </div>
+                    <i class="fas fa-money-check-alt fa-2x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Total Amount</h6>
+                        <h3 class="mb-0">R00.00</h3>
+                    </div>
+                    <i class="fas fa-coins fa-2x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Paid This Month</h6>
+                        <h3 class="mb-0">@ViewBag.PaidClaims</h3>
+                    </div>
+                    <i class="fas fa-check-double fa-2x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Active Lecturers</h6>
+                        <h3 class="mb-0">@ViewBag.ActiveLecturers</h3>
+                    </div>
+                    <i class="fas fa-users fa-2x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Claims Ready for Payment</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Lecturer</th>
+                                <th>Claim Reference</th>
+                                <th>Month/Year</th>
+                                <th>Hours</th>
+                                <th>Amount</th>
+                                <th>Final Approval</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                @foreach (var claim in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2"
+                                                     style="width: 35px; height: 35px; font-size: 14px;">
+                                                    @(claim.Lecturer.FirstName.FirstOrDefault())@(claim.Lecturer.LastName.FirstOrDefault())
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold">@claim.Lecturer.FirstName @claim.Lecturer.LastName</div>
+                                                    <small class="text-muted">@claim.Lecturer.EmployeeNumber</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><strong>@claim.ClaimReference</strong></td>
+                                        <td>@claim.MonthWorked .ToString("MMMM yyyy")</td>
+                                        <td>@claim.HoursWorked  h</td>
+                                        <td><strong>R@claim.TotalAmount.ToString("N2")</strong></td>
+                                        <td>
+                                            <small>@claim.LastModifiedDate.ToString("yyyy-MM-dd HH:mm")</small><br />
+                                            <small class="text-muted">by Academic Manager</small>
+                                        </td>
+                                        <td>
+                                            <form asp-action="MarkAsPaid" asp-route-claimId="@claim.ClaimId" method="post">
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-money-bill-wave me-1"></i>Mark as Paid
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">No claims are ready for payment.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,152 @@
+﻿@model CMCS.Models.ViewModels.CreateClaimViewModel
+@{
+    ViewData["Title"] = "Submit New Claim";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="fas fa-plus-circle me-2"></i>Submit New Claim</h1>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Monthly Claim Details</h5>
+            </div>
+            <div class="card-body">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                <form method="post" asp-action="Create" asp-controller="Claims" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Month" class="form-label">Month Worked</label>
+                                <select asp-for="Month" class="form-select" required>
+                                    <option value="">Select month...</option>
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                                <span asp-validation-for="Month" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Year" class="form-label">Year Worked</label>
+                                <select asp-for="Year" class="form-select" required>
+                                    <option value="">Select year...</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2023">2023</option>
+                                </select>
+                                <span asp-validation-for="Year" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="HoursWorked" class="form-label">Hours Worked</label>
+                                <input asp-for="HoursWorked" type="number" step="0.5" min="0.1" max="500"
+                                       class="form-control" placeholder="Enter hours worked" required id="hoursWorked">
+                                <span asp-validation-for="HoursWorked" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="HourlyRate" class="form-label">Hourly Rate</label>
+
+                                <span asp-validation-for="HourlyRate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ModuleTaught" class="form-label">Module Taught</label>
+                        <input asp-for="ModuleTaught" type="text" class="form-control" placeholder="e.g., PROG6212 - Programming 2B">
+                        <span asp-validation-for="ModuleTaught" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="AdditionalNotes" class="form-label">Additional Notes</label>
+                        <textarea asp-for="AdditionalNotes" class="form-control" rows="3"
+                                  placeholder="Any additional information about your claim..."></textarea>
+                        <span asp-validation-for="AdditionalNotes" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-calculator me-2"></i>Calculated Total</h6>
+                            <div class="d-flex justify-content-between">
+                                <span>Hours: <span id="displayHours">0</span></span>
+                                <span>Rate: R<span id="displayRate">100.00</span></span>
+                                <strong>Total: R<span id="totalAmount">0.00</span></strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Claim
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto-calculation for claim submission
+        function updateTotalAmount() {
+            const hours = parseFloat(document.getElementById('hoursWorked')?.value) || 0;
+            const rate = parseFloat(document.getElementById('hourlyRate')?.value) || 0;
+            const total = hours * rate;
+
+            if (document.getElementById('displayHours')) {
+                document.getElementById('displayHours').textContent = hours;
+                document.getElementById('displayRate').textContent = rate.toFixed(2);
+                document.getElementById('totalAmount').textContent = total.toFixed(2);
+            }
+        }
+
+        // Event listeners for auto-calculation
+        if (document.getElementById('hoursWorked')) {
+            document.getElementById('hoursWorked').addEventListener('input', updateTotalAmount);
+            document.getElementById('hourlyRate').addEventListener('input', updateTotalAmount);
+        }
+
+        // Initialize calculation
+        updateTotalAmount();
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

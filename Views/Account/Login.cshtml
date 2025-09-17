@@ -1,0 +1,72 @@
+﻿@model CMCS.Models.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    ViewData["WelcomeTitle"] = "Welcome Back";
+    ViewData["WelcomeMessage"] = "Access your account to manage claims, upload documents, and track your submissions.";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<h3 class="text-center mb-4">Login</h3>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<form method="post" asp-action="Login" asp-controller="Account">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email Address</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+            <input asp-for="Email" type="email" class="form-control" placeholder="Enter your email" required>
+        </div>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Password" class="form-label">Password</label>
+        <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+            <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" required>
+        </div>
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3 form-check">
+        <input asp-for="RememberMe" type="checkbox" class="form-check-input" id="rememberMe">
+        <label asp-for="RememberMe" class="form-check-label" for="rememberMe">
+            Remember me
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100 mb-3">
+        <i class="fas fa-sign-in-alt me-2"></i>Login
+    </button>
+</form>
+
+<div class="text-center">
+    <p class="mb-0">Don't have an account? <a href="@Url.Action("Register", "Account")">Register here</a></p>
+    <p><a href="@Url.Action("ForgotPassword", "Account")">Forgot your password?</a></p>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

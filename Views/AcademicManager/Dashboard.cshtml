@@ -1,0 +1,91 @@
+﻿@using CMCS.Models
+@model IEnumerable<Claim>
+
+@{
+    ViewData["Title"] = "Academic Manager Dashboard";
+}
+
+<div class="container-fluid py-4">
+    <h1 class="mb-4">Academic Manager Dashboard 📈</h1>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card border-primary shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Pending Claims</h5>
+                    <p class="card-text fs-2 fw-bold text-primary">@ViewBag.TotalPending</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card border-success shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Total Final Approved Claims</h5>
+                    <p class="card-text fs-2 fw-bold text-success">@ViewBag.TotalFinalApproved</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mt-5 mb-3">Pending Claims for Approval</h2>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-striped" id="pendingClaimsTable">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Claim ID</th>
+                        <th>Claim Type</th>
+                        <th>Lecturer</th>
+                        <th>Submitted Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var claim in Model)
+                    {
+                        <tr>
+                            <td>@claim.ClaimId</td>
+                            <td>@claim.MonthWorked</td>
+                            <td>@claim.LecturerId</td>
+                            <td>@claim.SubmissionDate.ToString("dd MMM yyyy")</td>
+                            <td><span class="badge bg-warning text-dark">@claim.Status.ToString().Replace("_", " ")</span></td>
+                            <td>
+                                <a asp-action="ReviewClaim" asp-route-id="@claim.ClaimId" class="btn btn-sm btn-info text-white">Review</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            🎉 No pending claims for approval at the moment.
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#pendingClaimsTable').DataTable({
+                "paging": true,
+                "ordering": true,
+                "searching": true
+            });
+        });
+    </script>
+}
